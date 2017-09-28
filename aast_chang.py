@@ -144,25 +144,25 @@ def begin_game(whowon):
         cell_trace[gpath[GPath]]+=1
         gameDisplay.blit(g_goti[3],putgoti(roww[gpath[GPath]],fillsequence[cell_trace[gpath[GPath]]]))
         cell_trace[gpath[GPath]]+=1
-        toss_player(whowon)
+        # toss_player(whowon)
         pygame.display.update()
         # time.sleep(4)
 
 
-def toss_player(whowon):
-    # def button(msg,x,y,w,h,ic,ac,action=None
-    turn_button=color_utility(whowon)
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                quitgame()
-        button(str(turn_button[1])+"'s Turn",700,20,300,50,turn_button[2],turn_button[2],chiye)
-        pygame.display.update()
+# def toss_player(whowon):
+#     # def button(msg,x,y,w,h,ic,ac,action=None
+#     turn_button=color_utility(whowon)
+#     while True:
+#         for event in pygame.event.get():
+#             if event.type == pygame.QUIT:
+#                 quitgame()
+#         button(str(turn_button[1])+"'s Turn",700,20,300,50,turn_button[2],turn_button[2],chiye)
+#         pygame.display.update()
+#
+#
+# def chiye():
+#
 
-
-def chiye():
-    print("Hello world")
-    pass
 
 def whoseturnfirst(whowon):
     fillcolor,tring,hhh=color_utility(whowon)
