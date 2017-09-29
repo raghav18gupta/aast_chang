@@ -25,10 +25,14 @@ clock = pygame.time.Clock()
 lineimg=pygame.image.load("imgs/lines.png")
 
 #gotis :)
-r_goti=[pygame.image.load("imgs/red.png")]*4
-g_goti=[pygame.image.load("imgs/green.png")]*4
-b_goti=[pygame.image.load("imgs/blue.png")]*4
-y_goti=[pygame.image.load("imgs/yellow.png")]*4
+r_goti = [pygame.image.load("imgs/red.png")]*4
+g_goti = [pygame.image.load("imgs/green.png")]*4
+b_goti = [pygame.image.load("imgs/blue.png")]*4
+y_goti = [pygame.image.load("imgs/yellow.png")]*4
+
+#seeds
+b_seeds = pygame.image.load("imgs/back.png")
+f_seeds = pygame.image.load("imgs/front.png")
 
 #game constant stuffs
 fillsequence = [(30,30),(60,60),(30,60),(60,30),(0,0),(90,90),(0,90),(90,0),(90,3),(0,60),(90,60),(0,30)]
@@ -38,6 +42,9 @@ roww = [(9,9)  ,(143,9)  ,(277,9)  ,(411,9)  ,(545,9)
        ,(9,277),(143,277),(277,277),(411,277),(545,277)
        ,(9,410),(143,410),(277,410),(411,410),(545,410)
        ,(9,542),(143,542),(277,542),(411,542),(545,542)]
+
+#global variables
+isclick = False
 
 #paths
 rpath=[2,1,0,5,10,15,20,21,22,23,24,19,14,9,4,3,8,13,18,17,16,11,6,7,12]
@@ -144,24 +151,27 @@ def begin_game(whowon):
         cell_trace[gpath[GPath]]+=1
         gameDisplay.blit(g_goti[3],putgoti(roww[gpath[GPath]],fillsequence[cell_trace[gpath[GPath]]]))
         cell_trace[gpath[GPath]]+=1
-        # toss_player(whowon)
         pygame.display.update()
+
+        turn_button=color_utility(whowon)
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    quitgame()
+            # def button(msg,x,y,w,h,ic,ac,action=None
+            button(str(turn_button[1])+"'s Turn",700,20,300,50,turn_button[2],turn_button[2],chiye)
+            pygame.display.update()
         # time.sleep(4)
 
 
-# def toss_player(whowon):
-#     # def button(msg,x,y,w,h,ic,ac,action=None
-#     turn_button=color_utility(whowon)
-#     while True:
-#         for event in pygame.event.get():
-#             if event.type == pygame.QUIT:
-#                 quitgame()
-#         button(str(turn_button[1])+"'s Turn",700,20,300,50,turn_button[2],turn_button[2],chiye)
-#         pygame.display.update()
-#
-#
-# def chiye():
-#
+def chiye():
+    inst_turn = list(map(lambda x: random.choice(x), [[0, 1]]*4))
+    for i in range(4):
+        if inst_turn[i] is 0:
+            gameDisplay.blit(b_seeds,(700 + (40 if i is 1 or 3 else 0), 100 + (50 if i is 2 or 3 else 0)))
+        elif inst_turn[i] is 1:
+            gameDisplay.blit(f_seeds,(700 + (40 if i is 1 or 3 else 0), 100 + (50 if i is 2 or 3 else 0)))
+    return
 
 
 def whoseturnfirst(whowon):
