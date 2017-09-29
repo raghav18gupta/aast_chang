@@ -34,7 +34,7 @@ y_goti = [pygame.image.load("imgs/yellow.png")]*4
 b_seeds = pygame.image.load("imgs/back.png")
 f_seeds = pygame.image.load("imgs/front.png")
 
-#game constant stuffs
+#game constants
 fillsequence = [(30,30),(60,60),(30,60),(60,30),(0,0),(90,90),(0,90),(90,0),(90,3),(0,60),(90,60),(0,30)]
 turnlist=rTurn,yTurn,bTurn,gTurn=list(range(0,4))
 roww = [(9,9)  ,(143,9)  ,(277,9)  ,(411,9)  ,(545,9)
@@ -45,6 +45,13 @@ roww = [(9,9)  ,(143,9)  ,(277,9)  ,(411,9)  ,(545,9)
 
 #global variables
 isclick = False
+inst_turn = []
+r_trace   = [0]*4
+y_trace   = [0]*4
+b_trace   = [0]*4
+g_trace   = [0]*4
+cell_trace= [0]*24
+RPath,YPath,BPath,GPath=0,0,0,0
 
 #paths
 rpath=[2,1,0,5,10,15,20,21,22,23,24,19,14,9,4,3,8,13,18,17,16,11,6,7,12]
@@ -107,81 +114,104 @@ def main_menu():
         clock.tick(15)
 
 def begin_game(whowon):
-    RPath,YPath,BPath,GPath=0,0,0,0
-    r_trace   = [0]*4
-    y_trace   = [0]*4
-    b_trace   = [0]*4
-    g_trace   = [0]*4
-    cell_trace= [0]*24
+    global isclick, inst_turn
+    global RPath,YPath,BPath,GPath
+    global r_trace, y_trace, b_trace, g_trace, cell_trace
+    where_b, where_r, where_y, where_g = [[],[]], [[],[]], [[],[]], [[],[]]
     while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                quitgame()
+        checkexit()
         gameDisplay.fill(black)
         gameDisplay.blit(lineimg,(0,0))
-        gameDisplay.blit(b_goti[0],putgoti(roww[bpath[BPath]],fillsequence[cell_trace[bpath[BPath]]]))
-        cell_trace[bpath[BPath]]+=1
-        gameDisplay.blit(b_goti[1],putgoti(roww[bpath[BPath]],fillsequence[cell_trace[bpath[BPath]]]))
-        cell_trace[bpath[BPath]]+=1
-        gameDisplay.blit(b_goti[2],putgoti(roww[bpath[BPath]],fillsequence[cell_trace[bpath[BPath]]]))
-        cell_trace[bpath[BPath]]+=1
-        gameDisplay.blit(b_goti[3],putgoti(roww[bpath[BPath]],fillsequence[cell_trace[bpath[BPath]]]))
-        cell_trace[bpath[BPath]]+=1
-        gameDisplay.blit(r_goti[0],putgoti(roww[rpath[RPath]],fillsequence[cell_trace[rpath[RPath]]]))
-        cell_trace[rpath[RPath]]+=1
-        gameDisplay.blit(r_goti[1],putgoti(roww[rpath[RPath]],fillsequence[cell_trace[rpath[RPath]]]))
-        cell_trace[rpath[RPath]]+=1
-        gameDisplay.blit(r_goti[2],putgoti(roww[rpath[RPath]],fillsequence[cell_trace[rpath[RPath]]]))
-        cell_trace[rpath[RPath]]+=1
-        gameDisplay.blit(r_goti[3],putgoti(roww[rpath[RPath]],fillsequence[cell_trace[rpath[RPath]]]))
-        cell_trace[rpath[RPath]]+=1
-        gameDisplay.blit(y_goti[0],putgoti(roww[ypath[YPath]],fillsequence[cell_trace[ypath[YPath]]]))
-        cell_trace[ypath[YPath]]+=1
-        gameDisplay.blit(y_goti[1],putgoti(roww[ypath[YPath]],fillsequence[cell_trace[ypath[YPath]]]))
-        cell_trace[ypath[YPath]]+=1
-        gameDisplay.blit(y_goti[2],putgoti(roww[ypath[YPath]],fillsequence[cell_trace[ypath[YPath]]]))
-        cell_trace[ypath[YPath]]+=1
-        gameDisplay.blit(y_goti[3],putgoti(roww[ypath[YPath]],fillsequence[cell_trace[ypath[YPath]]]))
-        cell_trace[ypath[YPath]]+=1
-        gameDisplay.blit(g_goti[0],putgoti(roww[gpath[GPath]],fillsequence[cell_trace[gpath[GPath]]]))
-        cell_trace[gpath[GPath]]+=1
-        gameDisplay.blit(g_goti[1],putgoti(roww[gpath[GPath]],fillsequence[cell_trace[gpath[GPath]]]))
-        cell_trace[gpath[GPath]]+=1
-        gameDisplay.blit(g_goti[2],putgoti(roww[gpath[GPath]],fillsequence[cell_trace[gpath[GPath]]]))
-        cell_trace[gpath[GPath]]+=1
-        gameDisplay.blit(g_goti[3],putgoti(roww[gpath[GPath]],fillsequence[cell_trace[gpath[GPath]]]))
-        cell_trace[gpath[GPath]]+=1
+        for i in range(4):
+            where_b[0].append(roww[bpath[BPath]])
+            where_b[1].append(fillsequence[cell_trace[bpath[BPath]]])
+            gameDisplay.blit(b_goti[i],putgoti(where_b[0][-1],where_b[1][-1]))
+            cell_trace[bpath[BPath]]+=1
+        # gameDisplay.blit(b_goti[1],putgoti(roww[bpath[BPath]],fillsequence[cell_trace[bpath[BPath]]]))
+        # cell_trace[bpath[BPath]]+=1
+        # gameDisplay.blit(b_goti[2],putgoti(roww[bpath[BPath]],fillsequence[cell_trace[bpath[BPath]]]))
+        # cell_trace[bpath[BPath]]+=1
+        # gameDisplay.blit(b_goti[3],putgoti(roww[bpath[BPath]],fillsequence[cell_trace[bpath[BPath]]]))
+        # cell_trace[bpath[BPath]]+=1
+        for i in range(4):
+            where_r[0].append(roww[rpath[RPath]])
+            where_r[1].append(fillsequence[cell_trace[rpath[RPath]]])
+            gameDisplay.blit(r_goti[i],putgoti(where_r[0][-1],where_r[1][-1]))
+            cell_trace[rpath[RPath]]+=1
+        # gameDisplay.blit(r_goti[1],putgoti(roww[rpath[RPath]],fillsequence[cell_trace[rpath[RPath]]]))
+        # cell_trace[rpath[RPath]]+=1
+        # gameDisplay.blit(r_goti[2],putgoti(roww[rpath[RPath]],fillsequence[cell_trace[rpath[RPath]]]))
+        # cell_trace[rpath[RPath]]+=1
+        # gameDisplay.blit(r_goti[3],putgoti(roww[rpath[RPath]],fillsequence[cell_trace[rpath[RPath]]]))
+        # cell_trace[rpath[RPath]]+=1
+        for i in range(4):
+            where_y[0].append(roww[ypath[YPath]])
+            where_y[1].append(fillsequence[cell_trace[ypath[YPath]]])
+            gameDisplay.blit(y_goti[i],putgoti(where_y[0][-1],where_y[1][-1]))
+            cell_trace[ypath[YPath]]+=1
+        # gameDisplay.blit(y_goti[1],putgoti(roww[ypath[YPath]],fillsequence[cell_trace[ypath[YPath]]]))
+        # cell_trace[ypath[YPath]]+=1
+        # gameDisplay.blit(y_goti[2],putgoti(roww[ypath[YPath]],fillsequence[cell_trace[ypath[YPath]]]))
+        # cell_trace[ypath[YPath]]+=1
+        # gameDisplay.blit(y_goti[3],putgoti(roww[ypath[YPath]],fillsequence[cell_trace[ypath[YPath]]]))
+        # cell_trace[ypath[YPath]]+=1
+        for i in range(4):
+            where_g[0].append(roww[gpath[GPath]])
+            where_g[1].append(fillsequence[cell_trace[gpath[GPath]]])
+            gameDisplay.blit(g_goti[i],putgoti(where_g[0][-1],where_g[1][-1]))
+            cell_trace[gpath[GPath]]+=1
+        # gameDisplay.blit(g_goti[1],putgoti(roww[gpath[GPath]],fillsequence[cell_trace[gpath[GPath]]]))
+        # cell_trace[gpath[GPath]]+=1
+        # gameDisplay.blit(g_goti[2],putgoti(roww[gpath[GPath]],fillsequence[cell_trace[gpath[GPath]]]))
+        # cell_trace[gpath[GPath]]+=1
+        # gameDisplay.blit(g_goti[3],putgoti(roww[gpath[GPath]],fillsequence[cell_trace[gpath[GPath]]]))
+        # cell_trace[gpath[GPath]]+=1
         pygame.display.update()
-
         turn_button=color_utility(whowon)
         while True:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    quitgame()
-            # def button(msg,x,y,w,h,ic,ac,action=None
-            button(str(turn_button[1])+"'s Turn",700,20,300,50,turn_button[2],turn_button[2],chiye)
+            checkexit()
+            button(str(turn_button[1])+"'s Turn",700,20,400,50,turn_button[2],turn_button[2],chiye)
             pygame.display.update()
-        # time.sleep(4)
+            if isclick is True:
+                button("Click on any "+str(turn_button[1])+" goti",700,20,400,50,turn_button[2],turn_button[2],action=None)
+                pygame.display.update()
+                '''while True:
+                    checkexit()
+                    mouse = pygame.mouse.get_pos()
+                    click = pygame.mouse.get_pressed()
+                    # if whowon == 0:'''
+
+                # if sum(inst_turn) is
+                isclick = False
+                time.sleep(3)
+                break
 
 
 def chiye():
+    global isclick, inst_turn
     inst_turn = list(map(lambda x: random.choice(x), [[0, 1]]*4))
     for i in range(4):
         if inst_turn[i] is 0:
-            gameDisplay.blit(b_seeds,(700 + (40 if i is 1 or 3 else 0), 100 + (50 if i is 2 or 3 else 0)))
+            gameDisplay.blit(b_seeds,(700 + (40 if i in (1,3) else 0), 100 + (50 if i in (2,3) else 0)))
         elif inst_turn[i] is 1:
-            gameDisplay.blit(f_seeds,(700 + (40 if i is 1 or 3 else 0), 100 + (50 if i is 2 or 3 else 0)))
+            gameDisplay.blit(f_seeds,(700 + (40 if i in (1,3) else 0), 100 + (50 if i in (2,3) else 0)))
+        button("msg",700,220,300,50,yellow,bright_green,None)
+    isclick = True
+    # time.sleep(2)
     return
 
+def checkexit():
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            quitgame()
 
 def whoseturnfirst(whowon):
     fillcolor,tring,hhh=color_utility(whowon)
     while True:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                quitgame()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 begin_game(whowon)
+            checkexit()
         gameDisplay.fill(fillcolor)
         tosstext = pygame.font.Font("Fonts/chalk.ttf",140)
         tossSurf, tossRect = text_objects(tring+"'s Turn", tosstext,black)
@@ -193,10 +223,9 @@ def whoseturnfirst(whowon):
 def toss():
     while True:
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                quitgame()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 whoseturnfirst(random.choice(turnlist))
+            checkexit()
         gameDisplay.fill(black)
         pygame.draw.polygon(gameDisplay,bright_red,[[0,0],[width,0],midpoint],0)
         pygame.draw.polygon(gameDisplay,bright_yellow,[[0,0],[0,height],midpoint],0)
